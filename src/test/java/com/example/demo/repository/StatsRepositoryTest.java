@@ -3,7 +3,6 @@ package com.example.demo.repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,27 +29,37 @@ public class StatsRepositoryTest {
 		LocalDate now = LocalDate.of(2024, 10, 11);
 //		LocalDate now = LocalDate.now();
 
-		// 주문 목록 조회
-		List<Order> list = orderRepository.findAll();
+//		// 주문 목록 조회
+//		List<Order> list = orderRepository.findAll();
+//
+//		// 오늘 날짜에 해당되는 리스트 필터링
+//		List<Order> filterList = list.stream().filter(entity -> {
+//			LocalDate orderDt = entity.getOrderDate();
+//			if (orderDt.equals(now)) {
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}).collect(Collectors.toList());
+//
+//		for (Order order : filterList) {
+//			System.out.println(order);
+//		}
+//
+//		// 전체 건수와 총금액 구하기
+//		long count = filterList.stream().count();
+//		int totalPrice = filterList.stream().mapToInt(e -> e.getPrice()).sum();
 
-		//
-		List<Order> filterList = list.stream().filter(entity -> {
-			LocalDate orderDt = entity.getOrderDate();
-			if (orderDt.equals(now)) {
-				return true;
-			} else {
-				return false;
-			}
-		}).collect(Collectors.toList());
+		// 쿼리메소드 이용해서 오늘 날짜에 해당되는 리스트 구하기
+		List<Order> list = orderRepository.findByorderDate(now);
+		
+		long count = list.stream().count();
+		int totalPrice = list.stream().mapToInt(e -> e.getPrice()).sum();
+		
 
-		for (Order order : filterList) {
+		for (Order order : list) {
 			System.out.println(order);
 		}
-
-		// 전체 건수와 총금액 구하기
-		long count = filterList.stream().count();
-		int totalPrice = filterList.stream().mapToInt(e -> e.getPrice()).sum();
-
 		
 		Stats stats = Stats.builder()
 							.orderDt(now)

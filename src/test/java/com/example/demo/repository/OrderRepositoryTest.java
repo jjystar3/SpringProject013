@@ -76,7 +76,7 @@ public class OrderRepositoryTest {
 			
 			if (orderDate.equals(yesterday)) {
 				repository.deleteById(no);
-				System.out.println(no + " remove..");
+				System.out.println(no + " removed..");
 			}
 		});
 		
