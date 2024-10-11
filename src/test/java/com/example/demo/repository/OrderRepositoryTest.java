@@ -1,7 +1,6 @@
 package com.example.demo.repository;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,25 +59,29 @@ public class OrderRepositoryTest {
 	@Test
 	public void 어제들어온_주문삭제() {
 		
-		// 현재 날짜 구하기
+//		// 현재 날짜 구하기
+//		LocalDate now = LocalDate.of(2024, 10, 11);
+////		LocalDate now = LocalDate.now(); 
+//		// 어제 날짜 구하기
+//		LocalDate yesterday = now.minusDays(1);
+//		
+//		// 주문 목록 조회
+//		List<Order> list = repository.findAll();
+//		
+//		// 전날 들어온 주문이력을 찾아서 삭제
+//		list.stream().forEach(entity -> {
+//			int no = entity.getNo();
+//			LocalDate orderDate = entity.getOrderDate();
+//			
+//			if (orderDate.equals(yesterday)) {
+//				repository.deleteById(no);
+//				System.out.println(no + " removed..");
+//			}
+//		});
+		
 		LocalDate now = LocalDate.of(2024, 10, 11);
-//		LocalDate now = LocalDate.now(); 
-		// 어제 날짜 구하기
 		LocalDate yesterday = now.minusDays(1);
-		
-		// 주문 목록 조회
-		List<Order> list = repository.findAll();
-		
-		// 전날 들어온 주문이력을 찾아서 삭제
-		list.stream().forEach(entity -> {
-			int no = entity.getNo();
-			LocalDate orderDate = entity.getOrderDate();
-			
-			if (orderDate.equals(yesterday)) {
-				repository.deleteById(no);
-				System.out.println(no + " removed..");
-			}
-		});
+		repository.deleteAllByOrderDate(yesterday);
 		
 	}
 	

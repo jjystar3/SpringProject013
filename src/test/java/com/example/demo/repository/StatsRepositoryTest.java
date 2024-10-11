@@ -35,11 +35,7 @@ public class StatsRepositoryTest {
 //		// 오늘 날짜에 해당되는 리스트 필터링
 //		List<Order> filterList = list.stream().filter(entity -> {
 //			LocalDate orderDt = entity.getOrderDate();
-//			if (orderDt.equals(now)) {
-//				return true;
-//			} else {
-//				return false;
-//			}
+//			return orderDt.equals(now);
 //		}).collect(Collectors.toList());
 //
 //		for (Order order : filterList) {
@@ -51,12 +47,11 @@ public class StatsRepositoryTest {
 //		int totalPrice = filterList.stream().mapToInt(e -> e.getPrice()).sum();
 
 		// 쿼리메소드 이용해서 오늘 날짜에 해당되는 리스트 구하기
-		List<Order> list = orderRepository.findByorderDate(now);
+		List<Order> list = orderRepository.findByOrderDate(now);
 		
 		long count = list.stream().count();
 		int totalPrice = list.stream().mapToInt(e -> e.getPrice()).sum();
 		
-
 		for (Order order : list) {
 			System.out.println(order);
 		}
