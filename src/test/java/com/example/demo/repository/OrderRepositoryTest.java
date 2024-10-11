@@ -15,7 +15,6 @@ public class OrderRepositoryTest {
 	@Autowired
 	OrderRepository repository;
 	
-
 	@Test
 	public void 어제날짜로_주문() {
 		LocalDate date = LocalDate.of(2024, 10, 10);

@@ -2,6 +2,7 @@ package com.example.demo.job;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -37,75 +38,67 @@ public class SimpleJobConfig {
 	@Autowired
 	StatsRepository statsRepository;
 
-	// 배치에 등록할 JOB을 빈으로 저장
+	// JOB
 	@Bean
-	Job simpleJob1() {
-		Job job = new JobBuilder("simpleJob", jobRepository)
+	public Job simpleJob1() {
+		return new JobBuilder("simpleJob", jobRepository)
 				.start(step1())
 				.next(step2())
 				.next(step3())
 				.build();
-		return job;
 	}
 
 	// STEP
 	@Bean
-	Step step1() {
+	public Step step1() {
 		return new StepBuilder("step1..", jobRepository)
 				.tasklet(testTasklet(), manager).build();
 	}
 
 	// STEP
 	@Bean
-	Step step2() {
+	public Step step2() {
 		return new StepBuilder("step2..", jobRepository)
 				.tasklet(test2Tasklet(), manager).build();
 	}
 	
 	// STEP
 	@Bean
-	Step step3() {
+	public Step step3() {
 		return new StepBuilder("step3..", jobRepository)
 				.tasklet(test3Tasklet(), manager).build();
 	}
 
 	// Tasklet: 스텝에서 하나의 작업만 처리하는 방식
 	@Bean
-	Tasklet testTasklet() {
+	public Tasklet testTasklet() {
 		return ((contribution, chunkContext) -> {
 			
 			System.out.println("Step1. 주문 건수와 금액 계산하기");
 			
 			// 주문 이력 가져오기
-//			List<Order> list = orderRepository.findAll();
-//			
-////			LocalDate now = LocalDate.now();
-//			LocalDate now = LocalDate.of(2024, 10, 11);
-//			
-//			List<Order> filterList = list.stream().filter(entity -> {
-//				LocalDate orderDt = entity.getOrderDate();
-//				if (orderDt.equals(now)) {
-//					return true;
-//				} else {
-//					return false;
-//				}
-//			}).collect(Collectors.toList());
-//			
-//			for(Order order : filterList) {
-//				System.out.println(order);
-//			}
-//			
-//			// 전체 건수와 총금액 구하기
-//			long count = filterList.stream().count();
-//			int totalPrice = filterList.stream().mapToInt(dto->dto.getPrice()).sum();
-
+			List<Order> list = orderRepository.findAll();
+			
+//			LocalDate now = LocalDate.now();
 			LocalDate now = LocalDate.of(2024, 10, 11);
 			
-			List<Order> list = orderRepository.findByOrderDate(now);
+			List<Order> filterList = list.stream().filter(entity -> {
+				LocalDate orderDt = entity.getOrderDate();
+				if (orderDt.equals(now)) {
+					return true;
+				} else {
+					return false;
+				}
+			}).collect(Collectors.toList());
 			
-			long count = list.stream().count();
-			int totalPrice = list.stream().mapToInt(e -> e.getPrice()).sum();
+			for(Order order : filterList) {
+				System.out.println(order);
+			}
 			
+			// 전체 건수와 총금액 구하기
+			long count = filterList.stream().count();
+			int totalPrice = filterList.stream().mapToInt(dto->dto.getPrice()).sum();
+
 			// 공유 데이터를 ExecutionContext에 추가
 			// ExecutionContext: Job 실행 중에 데이터를 공유하기 위해 사용되는 저장소
 			StepContext context = chunkContext.getStepContext(); 
@@ -118,7 +111,7 @@ public class SimpleJobConfig {
 	}
 
 	@Bean
-	Tasklet test2Tasklet() {
+	public Tasklet test2Tasklet() {
 		return ((contribution, chunkContext) -> {
 
 			System.out.println("Step2. 통계테이블에 저장하기");
@@ -148,35 +141,34 @@ public class SimpleJobConfig {
 	}
 	
 	@Bean
-	Tasklet test3Tasklet() {
+	public Tasklet test3Tasklet() {
 		return ((contribution, chunkContext) -> {
 
 			System.out.println("Step3. 전날 주문 기록 삭제");
 
-//			List<Order> list = orderRepository.findAll();
-//
-//			// 오늘 날짜
-//			LocalDate now = LocalDate.of(2024, 10, 11);
-////			LocalDate now = LocalDate.now(); 
-//			// 어제 날짜
-//			LocalDate yesterday = now.minusDays(1);
-//
-//			// 전날 들어온 주문이력을 찾아서 삭제
-//			list.stream().forEach(entity -> {
-//				int no = entity.getNo();
-//				LocalDate orderDate = entity.getOrderDate();
-//
-//				if (orderDate.equals(yesterday)) {
-//					orderRepository.deleteById(no);
-//					System.out.println(no + " remove..");
-//				}
-//			});
+			List<Order> list = orderRepository.findAll();
 
+			// 오늘 날짜
 			LocalDate now = LocalDate.of(2024, 10, 11);
+//			LocalDate now = LocalDate.now(); 
+			// 어제 날짜
 			LocalDate yesterday = now.minusDays(1);
-			orderRepository.deleteByOrderDate(yesterday);
+
+			// 전날 들어온 주문이력을 찾아서 삭제
+			list.stream().forEach(entity -> {
+				int no = entity.getNo();
+				LocalDate orderDate = entity.getOrderDate();
+
+				if (orderDate.equals(yesterday)) {
+					orderRepository.deleteById(no);
+					System.out.println(no + " remove..");
+				}
+			});
 			
 			return RepeatStatus.FINISHED;
 		});
 	}
+
 }
+
+// 배치가 계속 실패하면, 테이블 삭제 후 재시도
