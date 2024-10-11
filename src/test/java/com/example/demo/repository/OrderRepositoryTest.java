@@ -81,7 +81,7 @@ public class OrderRepositoryTest {
 		
 		LocalDate now = LocalDate.of(2024, 10, 11);
 		LocalDate yesterday = now.minusDays(1);
-		repository.deleteAllByOrderDate(yesterday);
+		repository.deleteByOrderDate(yesterday);
 		
 	}
 	

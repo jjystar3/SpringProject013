@@ -26,7 +26,7 @@ public class StatsRepositoryTest {
 	public void 오늘_총주문건수와금액_구하기() {
 		
 		// 오늘 날짜
-		LocalDate now = LocalDate.of(2024, 10, 11);
+//		LocalDate now = LocalDate.of(2024, 10, 11);
 //		LocalDate now = LocalDate.now();
 
 //		// 주문 목록 조회
@@ -46,6 +46,8 @@ public class StatsRepositoryTest {
 //		long count = filterList.stream().count();
 //		int totalPrice = filterList.stream().mapToInt(e -> e.getPrice()).sum();
 
+		LocalDate now = LocalDate.of(2024, 10, 11);
+		
 		// 쿼리메소드 이용해서 오늘 날짜에 해당되는 리스트 구하기
 		List<Order> list = orderRepository.findByOrderDate(now);
 		

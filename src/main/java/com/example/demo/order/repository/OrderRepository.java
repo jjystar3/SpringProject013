@@ -20,10 +20,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 	List<Order> findByOrderDate(@Param("date") LocalDate date);
 	
 	// 쿼리 어노테이션 없이 사용 (자동 생성됨)
-//	List<Order> findByorderDate(LocalDate date);
+//	List<Order> findByOrderDate(LocalDate date);
 	
 	// 날짜를 기준으로 주문이력 삭제 (쿼리메소드, Transactional 어노테이션 필요함)
 	@Modifying //@Query 어노테이션을 통해 작성된 변경이 일어나는 쿼리(INSERT, DELETE, UPDATE )를 실행할 때 사용된다.
-	void deleteAllByOrderDate(LocalDate date);
+	void deleteByOrderDate(LocalDate date);
 	
 }
